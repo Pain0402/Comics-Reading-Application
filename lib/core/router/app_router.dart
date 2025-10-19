@@ -2,10 +2,21 @@ import 'package:mycomicsapp/features/home/presentation/screens/home_screen.dart'
 import 'package:mycomicsapp/presentation/screens/splash_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 
 import 'package:mycomicsapp/features/auth/presentation/providers/auth_providers.dart';
 import 'package:mycomicsapp/features/auth/presentation/screens/login_screen.dart';
 import 'package:mycomicsapp/features/auth/presentation/screens/signup_screen.dart';
+
+import 'package:mycomicsapp/features/library/presentation/screens/library_screen.dart';
+import 'package:mycomicsapp/features/profile/presentation/screens/profile_screen.dart';
+import 'package:mycomicsapp/presentation/screens/scaffold_with_nav_bar.dart';
+
+
+// Private navigator keys for each tab
+final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+
 
 // Provider that creates and provides the GoRouter instance.
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -13,6 +24,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateChangesProvider);
 
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/splash',
     debugLogDiagnostics: true, // Log routing diagnostics in debug mode.
     routes: [
@@ -27,10 +39,41 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/signup',
         builder: (context, state) => const SignUpScreen(),
       ),
-      // Home screen route
-      GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-
-      // We will add authentication and other routes later.
+      // Main application navigation
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return ScaffoldWithNavBar(navigationShell: navigationShell);
+        },
+        branches: [
+          // Branch for the Home tab
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          // Branch for the Library tab
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/library',
+                builder: (context, state) => const LibraryScreen(),
+              ),
+            ],
+          ),
+          // Branch for the Profile tab
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
 
     // Redirect logic based on authentication state.
