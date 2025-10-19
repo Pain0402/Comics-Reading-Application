@@ -1,4 +1,4 @@
-name: ct312h_project
+name: mycomicsapp
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -31,6 +31,25 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Backend & State Management
+  supabase_flutter: ^2.5.0
+  flutter_riverpod: ^2.5.1
+  flutter_dotenv: ^5.1.0
+
+  # Routing
+  go_router: ^13.2.0
+
+  # UI & UX
+  google_fonts: ^6.1.0
+  flutter_animate: ^4.5.0
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  carousel_slider: ^4.2.1
+
+  # Utilities
+  image_picker: ^1.0.7
+  screen_brightness: ^1.0.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -51,6 +70,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  assets:
+      - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
