@@ -1,71 +1,128 @@
-import 'package:mycomicsapp/features/home/presentation/screens/home_screen.dart';
-import 'package:mycomicsapp/presentation/screens/splash_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mycomicsapp/features/auth/presentation/providers/auth_providers.dart';
 import 'package:mycomicsapp/features/auth/presentation/screens/login_screen.dart';
 import 'package:mycomicsapp/features/auth/presentation/screens/signup_screen.dart';
+import 'package:mycomicsapp/features/home/domain/entities/chapter.dart';
+import 'package:mycomicsapp/features/home/domain/entities/story.dart';
+import 'package:mycomicsapp/features/home/presentation/screens/home_screen.dart';
+import 'package:mycomicsapp/features/home/presentation/screens/story_details_screen.dart';
+import 'package:mycomicsapp/features/library/presentation/screens/library_screen.dart';
+import 'package:mycomicsapp/features/profile/presentation/screens/profile_screen.dart';
+import 'package:mycomicsapp/features/reader/presentation/screens/reader_screen.dart';
+import 'package:mycomicsapp/presentation/screens/scaffold_with_nav_bar.dart';
+import 'package:mycomicsapp/presentation/screens/splash_screen.dart';
 
-// Provider that creates and provides the GoRouter instance.
+// (navigator keys are unchanged)
+final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+
 final goRouterProvider = Provider<GoRouter>((ref) {
-  // Watch the authentication state to trigger redirects.
   final authState = ref.watch(authStateChangesProvider);
 
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/splash',
-    debugLogDiagnostics: true, // Log routing diagnostics in debug mode.
+    debugLogDiagnostics: true,
     routes: [
-      // Splash screen route
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
       ),
-      // Auth routes
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/signup',
         builder: (context, state) => const SignUpScreen(),
       ),
-      // Home screen route
-      GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
 
-      // We will add authentication and other routes later.
+      GoRoute(
+        path: '/story/:storyId',
+        builder: (context, state) {
+          final storyId = state.pathParameters['storyId']!;
+          final story = state.extra as Story?;
+          return StoryDetailsScreen(storyId: storyId, story: story);
+        },
+        // UPDATE: ADDED a nested route for the reader screen.
+        routes: [
+          GoRoute(
+            path: 'chapter/:chapterId',
+            builder: (context, state) {
+              final storyId = state.pathParameters['storyId']!;
+              // Safely extract data from the 'extra' parameter.
+              final extra = state.extra as Map<String, dynamic>?;
+              final storyTitle = extra?['storyTitle'] as String? ?? 'Loading...';
+              final chapter = extra?['chapter'] as Chapter?;
+              final allChapters = extra?['allChapters'] as List<Chapter>? ?? [];
+
+              if (chapter == null) {
+                return const Scaffold(body: Center(child: Text("Error: Chapter info not found.")));
+              }
+
+              return ReaderScreen(
+                storyId: storyId,
+                storyTitle: storyTitle,
+                chapter: chapter,
+                allChapters: allChapters,
+              );
+            },
+          ),
+        ],
+      ),
+      
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return ScaffoldWithNavBar(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/library',
+                builder: (context, state) => const LibraryScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
-
-    // Redirect logic based on authentication state.
+    // (redirect logic is unchanged)
     redirect: (context, state) {
-      // While the auth state is loading, don't redirect.
-      // The user will see the SplashScreen.
       if (authState.isLoading || authState.hasError) {
         return null;
       }
-
-      // Check if the user is logged in.
       final isLoggedIn = authState.valueOrNull != null;
-
       final location = state.matchedLocation;
       final isAtSplash = location == '/splash';
       final isAtAuthScreen = location == '/login' || location == '/signup';
 
-      // Scenario 1: If on the splash screen, must navigate away.
       if (isAtSplash) {
         return isLoggedIn ? '/home' : '/login';
       }
-
-      // Scenario 2: If logged in, but on an auth screen, go to home.
       if (isLoggedIn && isAtAuthScreen) {
         return '/home';
       }
-
-      // Scenario 3: If not logged in and trying to access a protected page,
-      // redirect to login.
       if (!isLoggedIn && !isAtAuthScreen) {
         return '/login';
       }
-
-      // Otherwise, no redirect is needed.
       return null;
     },
   );
 });
+
