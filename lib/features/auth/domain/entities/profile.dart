@@ -3,7 +3,7 @@ class Profile {
   final String? displayName;
   final String? avatarUrl;
   final String? role;
-  // User statistics
+  // Statistics fields
   final int bookmarkedStoriesCount;
   final int commentsCount;
   final int reviewsCount;
@@ -13,12 +13,13 @@ class Profile {
     this.displayName,
     this.avatarUrl,
     this.role,
+    // Initialize with default values
     this.bookmarkedStoriesCount = 0,
     this.commentsCount = 0,
     this.reviewsCount = 0,
   });
 
-  /// Factory for creating a Profile from the nested structure returned by the `get_user_profile_details` RPC.
+  /// Factory for parsing the nested structure from the `get_user_profile_details` RPC.
   factory Profile.fromMap(Map<String, dynamic> map) {
     final profileMap = map['profile'] as Map<String, dynamic>? ?? {};
     final statsMap = map['stats'] as Map<String, dynamic>? ?? {};
@@ -28,13 +29,14 @@ class Profile {
       displayName: profileMap['display_name'],
       avatarUrl: profileMap['avatar_url'],
       role: profileMap['role'] ?? 'reader',
+      // Assign statistics
       bookmarkedStoriesCount: statsMap['bookmarked_stories_count'] ?? 0,
       commentsCount: statsMap['comments_count'] ?? 0,
       reviewsCount: statsMap['reviews_count'] ?? 0,
     );
   }
 
-  /// Factory for parsing profile data embedded directly in a `select` query (e.g., from a join).
+  /// New factory for parsing a flat profile map, typically from a joined query.
   factory Profile.fromEmbeddedMap(Map<String, dynamic> map) {
     return Profile(
       id: map['id'] ?? '',
@@ -44,3 +46,4 @@ class Profile {
     );
   }
 }
+

@@ -44,7 +44,7 @@ dependencies:
   flutter_animate: ^4.5.0
   cached_network_image: ^3.3.1
   shimmer: ^3.0.0
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.1.1
 
   # Utilities
   image_picker: ^1.0.7
