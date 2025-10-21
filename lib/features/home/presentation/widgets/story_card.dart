@@ -5,10 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Resolves an image value into a usable URL.
-/// - If it's already a URL, returns it.
-/// - If it's a path in the 'stories' bucket, creates a public URL.
-/// - If null/empty, returns null.
+
 String? resolveImageUrl(String? value) {
   if (value == null || value.isEmpty) return null;
   if (value.startsWith('http')) return value;
@@ -85,6 +82,7 @@ class StoryCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // UPDATE: Changed to spaceEvenly
                   children: [
                     Text(
                       story.title,
@@ -93,13 +91,16 @@ class StoryCard extends StatelessWidget {
                       style: theme.textTheme.bodyLarge
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Chapter 12', // TODO: Bind to latest chapter
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                    const SizedBox(height: 2),
+                    // UPDATE: Added Expanded to allow the author name to truncate.
+                    Expanded(
+                      child: Text(
+                        story.author.displayName ?? 'Unknown Author',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ],

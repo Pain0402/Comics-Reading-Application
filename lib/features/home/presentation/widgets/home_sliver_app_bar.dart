@@ -1,16 +1,15 @@
 import 'package:mycomicsapp/features/auth/domain/entities/profile.dart';
-// import 'package:mycomicsapp/features/profile/presentation/providers/profile_providers.dart';
+import 'package:mycomicsapp/features/profile/presentation/providers/profile_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
-/// The SliverAppBar for the Home screen.
-class HomeSliverAppBar extends ConsumerWidget {
+class HomeSliverAppBar extends ConsumerWidget { 
   const HomeSliverAppBar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) { 
     final theme = Theme.of(context);
     // final userProfileAsync = ref.watch(userProfileProvider);
 
@@ -39,14 +38,13 @@ class HomeSliverAppBar extends ConsumerWidget {
     );
   }
 
-  /// Builds the background of the flexible space, showing a personalized greeting.
   Widget _buildExpandedBackground(
     BuildContext context,
     AsyncValue<Profile?> userProfileAsync,
   ) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 56), // Adjust padding
+      padding: const EdgeInsets.only(left: 16, bottom: 56),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +63,6 @@ class HomeSliverAppBar extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ],
-          // Show a shimmer effect while loading.
           loading: () => [
             Shimmer.fromColors(
               baseColor: Colors.grey.withOpacity(0.3),
@@ -80,7 +77,6 @@ class HomeSliverAppBar extends ConsumerWidget {
               ),
             ),
           ],
-          // Show a placeholder on error.
           error: (e, s) => [
             Text(
               "HI,",
@@ -100,4 +96,3 @@ class HomeSliverAppBar extends ConsumerWidget {
     );
   }
 }
-
