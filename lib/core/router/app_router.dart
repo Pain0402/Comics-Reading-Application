@@ -1,16 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:mycomicsapp/features/auth/presentation/providers/auth_providers.dart';
 import 'package:mycomicsapp/features/auth/presentation/screens/login_screen.dart';
 import 'package:mycomicsapp/features/auth/presentation/screens/signup_screen.dart';
+import 'package:mycomicsapp/features/home/domain/entities/chapter.dart';
 import 'package:mycomicsapp/features/home/domain/entities/story.dart';
 import 'package:mycomicsapp/features/home/presentation/screens/home_screen.dart';
 import 'package:mycomicsapp/features/home/presentation/screens/story_details_screen.dart';
 import 'package:mycomicsapp/features/library/presentation/screens/library_screen.dart';
 import 'package:mycomicsapp/features/profile/presentation/screens/profile_screen.dart';
+import 'package:mycomicsapp/features/reader/presentation/screens/reader_screen.dart';
 import 'package:mycomicsapp/presentation/screens/scaffold_with_nav_bar.dart';
 import 'package:mycomicsapp/presentation/screens/splash_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 // (navigator keys are unchanged)
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -33,19 +36,40 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SignUpScreen(),
       ),
 
-      // UPDATE: ADDED the route for story details screen.
-      // It is a top-level route because it can be accessed from multiple tabs.
       GoRoute(
         path: '/story/:storyId',
         builder: (context, state) {
           final storyId = state.pathParameters['storyId']!;
-          // The Story object is passed as an 'extra' for the Hero animation.
           final story = state.extra as Story?;
           return StoryDetailsScreen(storyId: storyId, story: story);
         },
-      ),
+        // UPDATE: ADDED a nested route for the reader screen.
+        routes: [
+          GoRoute(
+            path: 'chapter/:chapterId',
+            builder: (context, state) {
+              final storyId = state.pathParameters['storyId']!;
+              // Safely extract data from the 'extra' parameter.
+              final extra = state.extra as Map<String, dynamic>?;
+              final storyTitle = extra?['storyTitle'] as String? ?? 'Loading...';
+              final chapter = extra?['chapter'] as Chapter?;
+              final allChapters = extra?['allChapters'] as List<Chapter>? ?? [];
 
-      // (StatefulShellRoute is unchanged)
+              if (chapter == null) {
+                return const Scaffold(body: Center(child: Text("Error: Chapter info not found.")));
+              }
+
+              return ReaderScreen(
+                storyId: storyId,
+                storyTitle: storyTitle,
+                chapter: chapter,
+                allChapters: allChapters,
+              );
+            },
+          ),
+        ],
+      ),
+      
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return ScaffoldWithNavBar(navigationShell: navigationShell);
