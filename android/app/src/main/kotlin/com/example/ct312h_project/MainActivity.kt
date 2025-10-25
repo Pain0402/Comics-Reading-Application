@@ -1,4 +1,4 @@
-package com.example.ct312h_project
+package com.example.mycomicsapp
 
 import io.flutter.embedding.android.FlutterActivity
 

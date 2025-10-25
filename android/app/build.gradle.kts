@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.comicsapp"
+    namespace = "com.example.mycomicsapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -19,13 +19,13 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.comicsapp"
+        applicationId = "com.example.mycomicsapp"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        manifestPlaceholders["appAuthRedirectScheme"] = "com.example.comicsapp"
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.example.mycomicsapp"
     }
 
     buildTypes {

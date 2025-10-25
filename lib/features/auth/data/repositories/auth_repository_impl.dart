@@ -48,7 +48,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _supabaseClient.auth.signInWithOAuth(
         OAuthProvider.google,
         // The URL to which the browser will redirect after a successful sign-in.
-        redirectTo: 'com.example.comicsapp://callback',
+        redirectTo: 'com.example.mycomicsapp://callback',
       );
     } catch (e) {
       rethrow;

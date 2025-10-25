@@ -1,9 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.comicsapp">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.mycomicsapp">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="comicsapp"
+        android:label="mycomicsapp"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
