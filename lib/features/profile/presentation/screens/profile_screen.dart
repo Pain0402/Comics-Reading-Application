@@ -76,12 +76,38 @@ class ProfileScreen extends ConsumerWidget {
               ListTile(
                 leading: const Icon(Icons.settings_outlined),
                 title: const Text('Settings'),
+                hoverColor: theme.colorScheme.primary.withAlpha(26), 
+                splashColor: theme.colorScheme.primary.withAlpha(51), 
                 onTap: () {
                   // TODO: Navigate to settings screen
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.notifications_outlined),
+                title: const Text('Notifications'), 
+                hoverColor: theme.colorScheme.primary.withAlpha(26), 
+                splashColor: theme.colorScheme.primary.withAlpha(51), 
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Navigating to notification settings...')), 
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.help_outline_rounded),
+                title: const Text('Help Center'), 
+                hoverColor: theme.colorScheme.primary.withAlpha(26), 
+                splashColor: theme.colorScheme.primary.withAlpha(51), 
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Opening help center...')), 
+                  );
+                },
+              ),
+              ListTile(
                 leading: Icon(Icons.logout, color: colorScheme.error),
+                hoverColor: theme.colorScheme.primary.withAlpha(26), 
+                splashColor: theme.colorScheme.primary.withAlpha(51), 
                 title: Text(
                   'Sign Out',
                   style: TextStyle(color: colorScheme.error),
