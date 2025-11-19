@@ -3,9 +3,52 @@ import 'package:mycomicsapp/features/profile/presentation/providers/profile_prov
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mycomicsapp/core/utils/toast_utils.dart';
+
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
+
+  Future<void> _showLogoutConfirmationDialog(BuildContext context, WidgetRef ref) async {
+    final theme = Theme.of(context);
+    
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: theme.colorScheme.surface,
+          title: Text(
+            'Sign Out',
+            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          content: const Text('Are you sure you want to log out of your account?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Close',
+                style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+              },
+            ),
+            TextButton(
+              child: Text(
+                'Signout',
+                style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop(); 
+                ref.read(justLoggedOutProvider.notifier).state = true;
+                await ref.read(profileRepositoryProvider).signOut();
+                ref.read(justLoggedOutProvider.notifier).state = true;
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -112,9 +155,7 @@ class ProfileScreen extends ConsumerWidget {
                   'Sign Out',
                   style: TextStyle(color: colorScheme.error),
                 ),
-                onTap: () async {
-                  await ref.read(profileRepositoryProvider).signOut();
-                },
+                onTap: () => _showLogoutConfirmationDialog(context, ref),
               ),
             ],
           );
