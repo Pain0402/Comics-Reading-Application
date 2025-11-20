@@ -5,12 +5,40 @@ import 'package:mycomicsapp/features/home/presentation/widgets/ranking_carousel_
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:mycomicsapp/core/utils/toast_utils.dart';
+import 'package:mycomicsapp/features/auth/presentation/providers/auth_providers.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLoginStatus();
+    });
+  }
+
+  void _checkLoginStatus() {
+    final justLoggedIn = ref.read(justLoggedInProvider);
+    
+    if (justLoggedIn) {
+      ToastUtils.showSuccess(
+        context, 
+        'Login successful! Welcome back.'
+      );
+      ref.read(justLoggedInProvider.notifier).state = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final storiesAsyncValue = ref.watch(allStoriesProvider);
 
     return Scaffold(

@@ -5,8 +5,8 @@ class AppTheme {
   // --- Dark Mode Color Palette ---
   static const Color primaryBackground = Color(0xFF12172D);
   static const Color secondaryBackground = Color(0xFF1F295B);
-  static const Color accentCyan = Color(0xFF00FFFF);
-  static const Color accentMagenta = Color(0xFFF800FF);
+  static const Color accentCyan = Color.fromARGB(255, 0, 191, 255);
+  static const Color accentMagenta = Color.fromARGB(255, 133, 25, 248);
   static const Color textPrimary = Color(0xE6FFFFFF); // 90% opacity
   static const Color textSecondary = Color(0xB3B0B8E7); // 70% opacity
   static const Color glassBackground = Color(0xA62E285D);
@@ -16,7 +16,7 @@ class AppTheme {
   static const Color primaryBackgroundLight = Color(0xFFF0F2FF);
   static const Color secondaryBackgroundLight = Color(0xFFFFFFFF);
   static const Color accentPurpleLight = Color(0xFF6A00F4);
-  static const Color accentPinkLight = Color(0xFFE342FF);
+  static const Color accentPinkLight = Color.fromARGB(255, 133, 25, 248);
   static const Color textPrimaryLight = Color(0xFF12172D);
   static const Color textSecondaryLight = Color(0xFF5C6898);
   static const Color glassBackgroundLight = Color(0xB3FFFFFF);

@@ -29,7 +29,7 @@ class RankingCarouselSection extends StatelessWidget {
               return RankingStoryCard(story: story, rank: index + 1);
             },
             options: CarouselOptions(
-              height: 250,
+              height: 300,
               // Make the central card larger.
               viewportFraction: 0.6,
               enlargeCenterPage: true,

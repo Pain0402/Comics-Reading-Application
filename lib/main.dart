@@ -12,7 +12,6 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
   // Initialize Supabase client
-  // Get the URL and Anon Key from the environment variables
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,

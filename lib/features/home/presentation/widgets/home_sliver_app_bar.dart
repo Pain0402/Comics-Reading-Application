@@ -11,7 +11,7 @@ class HomeSliverAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) { 
     final theme = Theme.of(context);
-    // final userProfileAsync = ref.watch(userProfileProvider);
+    final userProfileAsync = ref.watch(userProfileProvider);
 
     return SliverAppBar(
       pinned: true,
@@ -25,7 +25,7 @@ class HomeSliverAppBar extends ConsumerWidget {
         ],
         titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
         title: Text('Explore', style: theme.textTheme.headlineMedium),
-        // background: _buildExpandedBackground(context, userProfileAsync),
+        background: _buildExpandedBackground(context, userProfileAsync),
       ),
       actions: [
         IconButton(
