@@ -16,7 +16,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  
   @override
   void initState() {
     super.initState();
@@ -27,12 +26,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void _checkLoginStatus() {
     final justLoggedIn = ref.read(justLoggedInProvider);
-    
+
     if (justLoggedIn) {
-      ToastUtils.showSuccess(
-        context, 
-        'Login successful! Welcome back.'
-      );
+      ToastUtils.showSuccess(context, 'Login successful! Welcome back.');
       ref.read(justLoggedInProvider.notifier).state = false;
     }
   }
@@ -41,12 +37,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final storiesAsyncValue = ref.watch(allStoriesProvider);
 
+    // --- LOGIC RESPONSIVE (Đồng bộ với Library) ---
+    final size = MediaQuery.of(context).size;
+
+    // Màn hình rộng > 600px (Tablet/Ngang) -> 4 cột, ngược lại 2 cột
+    final int gridColumns = size.width > 600 ? 4 : 2;
+
+    // Màn hình nhỏ: 0.62 (cao hơn để chứa chữ), Màn hình lớn: 0.72
+    final double cardAspectRatio = size.width > 600 ? 0.72 : 0.62;
+    // --------------------------------------------
+
     return Scaffold(
       body: storiesAsyncValue.when(
-        loading: () => _buildLoadingSkeleton(context),
-        error: (error, stackTrace) => Center(
-          child: Text('Error loading data: ${error.toString()}'),
-        ),
+        // Truyền tham số vào Skeleton để khớp giao diện
+        loading: () =>
+            _buildLoadingSkeleton(context, gridColumns, cardAspectRatio),
+        error: (error, stackTrace) =>
+            Center(child: Text('Error loading data: ${error.toString()}')),
         data: (stories) {
           return RefreshIndicator(
             onRefresh: () => ref.refresh(allStoriesProvider.future),
@@ -55,7 +62,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const HomeSliverAppBar(),
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
                 RankingCarouselSection(stories: stories.take(5).toList()),
-                ForYouGridSection(stories: stories.skip(5).toList()),
+
+                // Truyền tham số Responsive vào ForYouGridSection
+                ForYouGridSection(
+                  stories: stories.skip(5).toList(),
+                  crossAxisCount: gridColumns,
+                  childAspectRatio: cardAspectRatio,
+                ),
               ],
             ),
           );
@@ -65,7 +78,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   /// Builds a shimmer loading skeleton for the home screen.
-  Widget _buildLoadingSkeleton(BuildContext context) {
+  Widget _buildLoadingSkeleton(
+    BuildContext context,
+    int crossAxisCount,
+    double childAspectRatio,
+  ) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
@@ -110,13 +127,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverGrid.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount, // Dùng biến Responsive
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                childAspectRatio: 0.6,
+                childAspectRatio: childAspectRatio, // Dùng biến Responsive
               ),
-              itemCount: 4,
+              itemCount: 6, // Tăng số lượng dummy item
               itemBuilder: (context, index) => Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -130,4 +147,3 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-
