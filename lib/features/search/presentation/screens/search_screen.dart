@@ -3,6 +3,7 @@ import 'package:mycomicsapp/features/search/presentation/providers/search_provid
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mycomicsapp/features/search/presentation/widgets/filter_bottom_sheet.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SearchScreen extends ConsumerWidget {
   const SearchScreen({super.key});
@@ -11,31 +12,30 @@ class SearchScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchResults = ref.watch(searchResultsProvider);
     final searchQuery = ref.watch(searchQueryProvider);
-    final theme = Theme.of(context); // Lấy theme để dùng màu sắc chuẩn
+
+    // Lắng nghe bộ lọc để kiểm tra xem có đang lọc không
+    final currentFilters = ref.watch(filterOptionsProvider);
+    final bool hasActiveFilters = currentFilters.genreIds.isNotEmpty;
+
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // Loại bỏ padding mặc định của title để chúng ta tự căn chỉnh
         titleSpacing: 16,
-        // Thay vì chỉ dùng TextField, ta dùng Row để chứa cả Thanh tìm kiếm và Nút lọc
         title: Row(
           children: [
-            // --- 1. THANH TÌM KIẾM ---
+            // THANH TÌM KIẾM
             Expanded(
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
-                  // Màu nền xám tối (hoặc sáng tùy theme)
                   color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(
-                    24,
-                  ), // Bo tròn hình viên thuốc
+                  borderRadius: BorderRadius.circular(24),
                 ),
                 child: TextField(
-                  autofocus:
-                      false, // Tắt autofocus để tránh bàn phím nhảy lên ngay lập tức
+                  autofocus: false,
                   textAlignVertical: TextAlignVertical.center,
                   style: theme.textTheme.bodyLarge,
                   decoration: InputDecoration(
@@ -68,59 +68,105 @@ class SearchScreen extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(
-              width: 12,
-            ), // Khoảng cách giữa thanh tìm kiếm và nút lọc
-            // --- 2. NÚT LỌC (FILTER) RIÊNG BIỆT ---
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color:
-                    theme.colorScheme.surfaceContainerHighest, // Cùng màu nền
-                borderRadius: BorderRadius.circular(24), // Hình tròn
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.tune, // Icon điều chỉnh/lọc
-                  color: theme.colorScheme.onSurface,
+            const SizedBox(width: 12),
+
+            //NÚT LỌC
+            Stack(
+              children: [
+                Container(
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    // Nếu đang lọc -> Đổi màu nền thành màu Chính (Primary) để gây chú ý
+                    // Nếu không -> Giữ màu xám
+                    color: hasActiveFilters
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.tune,
+                      // Nếu đang lọc -> Icon màu trắng
+                      // Nếu không -> Icon màu chữ thường
+                      color: hasActiveFilters
+                          ? theme.colorScheme.onPrimary
+                          : theme.colorScheme.onSurface,
+                    ),
+                    onPressed: () {
+                      // Ẩn bàn phím trước khi mở bộ lọc
+                      FocusManager.instance.primaryFocus?.unfocus();
+
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: theme.colorScheme.surface,
+                        showDragHandle: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (_) => const FilterBottomSheet(),
+                      );
+                    },
+                  ),
                 ),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    // Thêm các thuộc tính này để BottomSheet đẹp hơn
-                    backgroundColor: theme.colorScheme.surface,
-                    showDragHandle: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
+                // Chấm đỏ thông báo (Badge) - Chỉ hiện khi có filter
+                if (hasActiveFilters)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: Colors.red, // Màu đỏ cảnh báo
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: theme.colorScheme.surface,
+                          width: 2,
+                        ),
                       ),
                     ),
-                    builder: (_) => const FilterBottomSheet(),
-                  );
-                },
-              ),
+                  ),
+              ],
             ),
           ],
         ),
-        // Đã chuyển nút lọc vào title nên không cần actions nữa
-        actions: [],
       ),
       body: searchResults.when(
         data: (stories) {
-          // Cập nhật thông báo
-          if (searchQuery.isEmpty &&
-              ref.watch(filterOptionsProvider).genreIds.isEmpty) {
-            return const Center(
-              child: Text('Start searching for your favorite comics.'),
+          if (searchQuery.isEmpty && !hasActiveFilters) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search,
+                    size: 80,
+                    color: theme.colorScheme.surfaceContainerHighest,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Start searching for your favorite comics.',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
           if (stories.isEmpty) {
             return const Center(child: Text('No results found.'));
           }
+
           return GridView.builder(
             padding: const EdgeInsets.all(16),
+            //Tự động ẩn bàn phím khi cuộn
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 16,
@@ -130,7 +176,11 @@ class SearchScreen extends ConsumerWidget {
             itemCount: stories.length,
             itemBuilder: (context, index) {
               final story = stories[index];
-              return StoryCard(story: story);
+              // Animation
+              return StoryCard(story: story)
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: (index * 50).ms)
+                  .slideY(begin: 0.1, end: 0);
             },
           );
         },

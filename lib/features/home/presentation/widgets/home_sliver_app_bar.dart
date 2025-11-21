@@ -5,14 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:ui';
-class HomeSliverAppBar extends ConsumerWidget { 
+
+class HomeSliverAppBar extends ConsumerWidget {
   const HomeSliverAppBar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) { 
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final userProfileAsync = ref.watch(userProfileProvider);
-    
+
     return SliverAppBar(
       pinned: true,
       expandedHeight: 180.0,
@@ -22,7 +23,7 @@ class HomeSliverAppBar extends ConsumerWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
           child: Container(
-            color: theme.scaffoldBackgroundColor.withOpacity(0), 
+            color: theme.scaffoldBackgroundColor.withOpacity(0),
             child: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,
@@ -30,8 +31,8 @@ class HomeSliverAppBar extends ConsumerWidget {
               ],
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
-                'Explore', 
-                style: theme.textTheme.headlineMedium?.copyWith(
+                'ComicsVerse',
+                style: theme.textTheme.headlineSmall?.copyWith(
                   shadows: [
                     Shadow(
                       color: Colors.black.withOpacity(0.3),
@@ -48,21 +49,25 @@ class HomeSliverAppBar extends ConsumerWidget {
       ),
       actions: [
         IconButton(
+          onPressed: () {},
+          icon: Badge(child: Icon(Icons.notifications_outlined, size: 24)),
+        ),
+        IconButton(
           onPressed: () => context.push('/search'),
           icon: const Icon(Icons.search_rounded),
-          iconSize: 28,
+          iconSize: 26,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 1),
       ],
     );
   }
 
- Widget _buildExpandedBackground(
+  Widget _buildExpandedBackground(
     BuildContext context,
     AsyncValue<Profile?> userProfileAsync,
   ) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 70),
       child: Column(
@@ -76,8 +81,8 @@ class HomeSliverAppBar extends ConsumerWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: theme.colorScheme.primary.withOpacity(0.5), 
-                      width: 2
+                      color: theme.colorScheme.primary.withOpacity(0.5),
+                      width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -95,15 +100,15 @@ class HomeSliverAppBar extends ConsumerWidget {
                         : null,
                     child: profile?.avatarUrl == null
                         ? Icon(
-                            Icons.person, 
-                            size: 24, 
-                            color: theme.colorScheme.onSurfaceVariant
+                            Icons.person,
+                            size: 24,
+                            color: theme.colorScheme.onSurfaceVariant,
                           )
                         : null,
                   ),
                 ),
                 const SizedBox(width: 16),
-                
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +141,7 @@ class HomeSliverAppBar extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             loading: () => Row(
               children: [
                 Shimmer.fromColors(
@@ -161,13 +166,16 @@ class HomeSliverAppBar extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             error: (e, s) => Row(
               children: [
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: theme.colorScheme.errorContainer,
-                  child: Icon(Icons.error_outline, color: theme.colorScheme.error),
+                  child: Icon(
+                    Icons.error_outline,
+                    color: theme.colorScheme.error,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -183,7 +191,9 @@ class HomeSliverAppBar extends ConsumerWidget {
                       ),
                       Text(
                         'ComicsVerse',
-                        style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
