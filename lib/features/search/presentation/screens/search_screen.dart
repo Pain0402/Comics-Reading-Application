@@ -112,24 +112,6 @@ class SearchScreen extends ConsumerWidget {
                     },
                   ),
                 ),
-                // Chấm đỏ thông báo (Badge) - Chỉ hiện khi có filter
-                if (hasActiveFilters)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        color: Colors.red, // Màu đỏ cảnh báo
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: theme.colorScheme.surface,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
           ],
