@@ -39,11 +39,10 @@ class AppTheme {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color.fromARGB(255, 255, 255, 255),
-      Color(0xFFF0F2FF),
-      Color.fromARGB(255, 185, 115, 255),
+      Color.fromARGB(255, 184, 190, 255),
+      Color.fromARGB(255, 255, 212, 255),
     ],
-    stops: [0.2, 0.6, 1.0],
+    stops: [0.2, 1.0],
   );
 
   // --- Dark Theme Definition ---
