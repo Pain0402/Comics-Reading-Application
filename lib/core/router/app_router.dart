@@ -119,7 +119,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     // Automatic redirection logic based on authentication state.
     redirect: (context, state) {
       if (authState.isLoading || authState.hasError) {
-        return null; // Stay on the current screen (e.g., SplashScreen) while loading.
+        return null; 
       }
 
       final isLoggedIn = authState.valueOrNull != null;
