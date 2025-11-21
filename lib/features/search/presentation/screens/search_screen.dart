@@ -11,38 +11,101 @@ class SearchScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchResults = ref.watch(searchResultsProvider);
     final searchQuery = ref.watch(searchQueryProvider);
+    final theme = Theme.of(context); // Lấy theme để dùng màu sắc chuẩn
 
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: 'Search for comics...',
-            border: InputBorder.none,
-            suffixIcon: searchQuery.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () =>
-                        ref.read(searchQueryProvider.notifier).state = '',
-                  )
-                : null,
-          ),
-          onChanged: (query) {
-            ref.read(searchQueryProvider.notifier).state = query;
-          },
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        // Loại bỏ padding mặc định của title để chúng ta tự căn chỉnh
+        titleSpacing: 16,
+        // Thay vì chỉ dùng TextField, ta dùng Row để chứa cả Thanh tìm kiếm và Nút lọc
+        title: Row(
+          children: [
+            // --- 1. THANH TÌM KIẾM ---
+            Expanded(
+              child: Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  // Màu nền xám tối (hoặc sáng tùy theme)
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(
+                    24,
+                  ), // Bo tròn hình viên thuốc
+                ),
+                child: TextField(
+                  autofocus:
+                      false, // Tắt autofocus để tránh bàn phím nhảy lên ngay lập tức
+                  textAlignVertical: TextAlignVertical.center,
+                  style: theme.textTheme.bodyLarge,
+                  decoration: InputDecoration(
+                    hintText: 'Search for comics...',
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    border: InputBorder.none,
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    suffixIcon: searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.clear,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            onPressed: () =>
+                                ref.read(searchQueryProvider.notifier).state =
+                                    '',
+                          )
+                        : null,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  onChanged: (query) {
+                    ref.read(searchQueryProvider.notifier).state = query;
+                  },
+                ),
+              ),
+            ),
+
+            const SizedBox(
+              width: 12,
+            ), // Khoảng cách giữa thanh tìm kiếm và nút lọc
+            // --- 2. NÚT LỌC (FILTER) RIÊNG BIỆT ---
+            Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color:
+                    theme.colorScheme.surfaceContainerHighest, // Cùng màu nền
+                borderRadius: BorderRadius.circular(24), // Hình tròn
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Icons.tune, // Icon điều chỉnh/lọc
+                  color: theme.colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    // Thêm các thuộc tính này để BottomSheet đẹp hơn
+                    backgroundColor: theme.colorScheme.surface,
+                    showDragHandle: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
+                    builder: (_) => const FilterBottomSheet(),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (_) => const FilterBottomSheet(),
-              );
-            },
-          ),
-        ],
+        // Đã chuyển nút lọc vào title nên không cần actions nữa
+        actions: [],
       ),
       body: searchResults.when(
         data: (stories) {
