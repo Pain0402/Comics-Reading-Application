@@ -15,6 +15,8 @@ import 'package:mycomicsapp/features/reader/presentation/screens/reader_screen.d
 import 'package:mycomicsapp/features/search/presentation/screens/search_screen.dart';
 import 'package:mycomicsapp/presentation/screens/scaffold_with_nav_bar.dart';
 import 'package:mycomicsapp/presentation/screens/splash_screen.dart';
+import 'package:mycomicsapp/features/home/presentation/screens/ranking_screen.dart';
+
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -94,6 +96,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/home',
                 builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/ranking',
+                builder: (context, state) => const RankingScreen(),
               ),
             ],
           ),
