@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
-class HomeSliverAppBar extends ConsumerWidget { 
+class HomeSliverAppBar extends ConsumerWidget {
   const HomeSliverAppBar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) { 
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final userProfileAsync = ref.watch(userProfileProvider);
 
@@ -19,21 +19,22 @@ class HomeSliverAppBar extends ConsumerWidget {
       backgroundColor: theme.scaffoldBackgroundColor.withOpacity(0.8),
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(
-        stretchModes: const [
-          StretchMode.zoomBackground,
-          StretchMode.fadeTitle,
-        ],
+        stretchModes: const [StretchMode.zoomBackground, StretchMode.fadeTitle],
         titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
-        title: Text('Explore', style: theme.textTheme.headlineMedium),
+        title: Text('ComicsVerse', style: theme.textTheme.headlineSmall),
         background: _buildExpandedBackground(context, userProfileAsync),
       ),
       actions: [
         IconButton(
+          onPressed: () {},
+          icon: Badge(child: Icon(Icons.notifications_outlined, size: 24)),
+        ),
+        IconButton(
           onPressed: () => context.push('/search'),
           icon: const Icon(Icons.search_rounded),
-          iconSize: 28,
+          iconSize: 26,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
       ],
     );
   }
@@ -44,7 +45,7 @@ class HomeSliverAppBar extends ConsumerWidget {
   ) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 56),
+      padding: const EdgeInsets.only(left: 16, bottom: 65),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
