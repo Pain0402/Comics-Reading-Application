@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppTheme {
   // --- Dark Mode Color Palette ---
@@ -22,21 +24,40 @@ class AppTheme {
   static const Color glassBackgroundLight = Color(0xB3FFFFFF);
   static const Color glowColorLight = Color(0x1A6A00F4);
 
+  static const LinearGradient darkLinearGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF12172D), 
+      Color.fromARGB(255, 22, 128, 220), 
+      Color(0xFF251C3B), 
+    ],
+    stops: [0.0, 0.6, 1.0],
+  );
+
+  static const LinearGradient lightLinearGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color.fromARGB(255, 255, 255, 255),
+      Color(0xFFF0F2FF),
+      Color.fromARGB(255, 185, 115, 255),
+    ],
+    stops: [0.2, 0.6, 1.0],
+  );
+
   // --- Dark Theme Definition ---
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColor: accentCyan,
-    scaffoldBackgroundColor: Colors.transparent, // Background handled by a gradient container.
+    scaffoldBackgroundColor: Colors.transparent, 
     colorScheme: const ColorScheme.dark(
       primary: accentCyan,
       secondary: accentMagenta,
-      background: primaryBackground,
       surface: secondaryBackground,
       onPrimary: Colors.black,
       onSecondary: Colors.white,
-      onBackground: textPrimary,
       onSurface: textPrimary,
-      surfaceVariant: secondaryBackground,
       onSurfaceVariant: textSecondary,
     ),
     textTheme: TextTheme(
@@ -50,9 +71,11 @@ class AppTheme {
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
+      iconTheme: IconThemeData(color: textPrimary),
+      titleTextStyle: TextStyle(color: textPrimary, fontSize: 20, fontWeight: FontWeight.bold)
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Colors.transparent,
+      backgroundColor: secondaryBackground,
       selectedItemColor: accentCyan,
       unselectedItemColor: textSecondary,
       selectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
@@ -64,17 +87,14 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primaryColor: accentPurpleLight,
-    scaffoldBackgroundColor: primaryBackgroundLight,
+    scaffoldBackgroundColor: Colors.transparent,
     colorScheme: const ColorScheme.light(
       primary: accentPurpleLight,
       secondary: accentPinkLight,
-      background: primaryBackgroundLight,
       surface: secondaryBackgroundLight,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
-      onBackground: textPrimaryLight,
       onSurface: textPrimaryLight,
-      surfaceVariant: Color(0xFFE8EAF6),
       onSurfaceVariant: textSecondaryLight,
     ),
     textTheme: TextTheme(
@@ -99,4 +119,54 @@ class AppTheme {
       unselectedLabelStyle: GoogleFonts.poppins(),
     ),
   );
+}
+
+final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+  return ThemeModeNotifier();
+});
+
+class ThemeModeNotifier extends StateNotifier<ThemeMode> {
+  static const _themeKey = 'theme_mode_v1';
+
+  ThemeModeNotifier() : super(ThemeMode.system) {
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedTheme = prefs.getString(_themeKey);
+      
+      if (savedTheme == 'dark') {
+        state = ThemeMode.dark;
+      } else if (savedTheme == 'light') {
+        state = ThemeMode.light;
+      } else {
+        state = ThemeMode.system;
+      }
+    } catch (e) {
+      debugPrint('Error loading theme: $e');
+    }
+  }
+
+  Future<void> toggleTheme(bool isDark) async {
+    state = isDark ? ThemeMode.dark : ThemeMode.light;
+    
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_themeKey, isDark ? 'dark' : 'light');
+    } catch (e) {
+      debugPrint('Error saving theme: $e');
+    }
+  }
+  
+  Future<void> setSystemTheme() async {
+    state = ThemeMode.system;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_themeKey);
+    } catch (e) {
+      debugPrint('Error resetting theme: $e');
+    }
+  }
 }

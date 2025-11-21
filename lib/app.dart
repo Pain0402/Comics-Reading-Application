@@ -11,26 +11,13 @@ class MyApp extends ConsumerWidget {
     // Watch the GoRouter provider to integrate it with MaterialApp.
     final router = ref.watch(goRouterProvider);
 
-    final Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
-    final bool isDarkMode = platformBrightness == Brightness.dark;
+    
 
-    const darkGradient = BoxDecoration(
-      gradient: LinearGradient(
-        colors: [
-          AppTheme.primaryBackground, 
-          Color(0xFF1A234E), 
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    );
+    final themeMode = ref.watch(themeModeProvider);
 
-    const lightGradient = BoxDecoration(
-      color: AppTheme.primaryBackgroundLight, 
-    );
 
     return Container(
-      decoration: isDarkMode ? darkGradient : lightGradient,
+  
       child: MaterialApp.router(
         title: 'ComicsVerse',
         debugShowCheckedModeBanner: false,
@@ -40,10 +27,22 @@ class MyApp extends ConsumerWidget {
         // Configure the dark theme.
         darkTheme: AppTheme.darkTheme,
         // Automatically select theme based on system settings.
-        themeMode: ThemeMode.system,
+        themeMode: themeMode,
 
         // Set the router configuration.
         routerConfig: router,
+        builder: (context, child) {
+          final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+          
+          return Container(
+            decoration: BoxDecoration(
+              gradient: isDarkMode 
+                  ? AppTheme.darkLinearGradient 
+                  : AppTheme.lightLinearGradient,
+            ),
+            child: child, 
+          );
+        },
       ),
     );
   }
