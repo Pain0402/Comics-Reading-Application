@@ -31,8 +31,8 @@ class HomeSliverAppBar extends ConsumerWidget {
               ],
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
-                'Explore',
-                style: theme.textTheme.headlineMedium?.copyWith(
+                'ComicsVerse',
+                style: theme.textTheme.headlineSmall?.copyWith(
                   shadows: [
                     Shadow(
                       color: Colors.black.withOpacity(0.3),
@@ -57,7 +57,7 @@ class HomeSliverAppBar extends ConsumerWidget {
           icon: const Icon(Icons.search_rounded),
           iconSize: 26,
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 1),
       ],
     );
   }
