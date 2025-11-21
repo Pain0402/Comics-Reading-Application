@@ -48,6 +48,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
+                  icon: Icon(Icons.leaderboard_outlined),
+                  activeIcon: Icon(Icons.leaderboard_rounded),
+                  label: 'Ranking',
+                ),
+                BottomNavigationBarItem(
                   icon: Icon(Icons.book_outlined),
                   activeIcon: Icon(Icons.book_rounded),
                   label: 'Library',
