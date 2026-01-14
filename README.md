@@ -1,46 +1,109 @@
-# ComicsVerse: A Modern Cross-Platform Comics Reader
+# 📚 ComicsVerse
 
-## Project Introduction
-
-**ComicsVerse** is a full-featured, cross-platform mobile application developed using **Flutter**. It is designed to provide a smooth, modern reading experience for comics and manga enthusiasts. The application features a robust backend architecture utilizing Supabase for real-time interactions and data persistence.
-
-The core focus is on intuitive content discovery, personalized library management, and a dynamic community experience.
-
-## Key Features
-
-* **Flexible Authentication**: Supports sign-up and sign-in via Email/Password, as well as **Google OAuth**. Authentication and user sessions are managed securely by **Supabase Auth**.
-* **Intuitive Discovery**: Features categorized sections including **Weekly Rankings** (displayed in a carousel format) and a curated **"For You"** grid.
-* **Advanced Search & Filtering**: Users can search comics by title and apply filters based on **genres**. The search logic incorporates a **500ms debounce** mechanism to optimize API calls while typing.
-* **Optimized Reading Experience**:
-    * Supports two modes: **Vertical Scroll** and **Horizontal Page Flip**.
-    * Includes a floating control panel with **glassmorphism** effects and direct access to brightness settings (via `screen_brightness`).
-    * Allows multi-touch image zooming (`InteractiveViewer`).
-* **Real-time Community**: A fully functional comment section displayed in a sheet, featuring **nested replies**. All comments are updated instantly using **Supabase Realtime**.
-* **Personal Library (Bookmarks)**: Users can easily add or remove stories from their library with immediate feedback. Supports **pull-to-refresh** to synchronize the local library list.
-* **Profile Management**: Allows editing the display name and updating the **profile avatar** (uploaded to **Supabase Storage**). Includes a built-in **Dark Mode** toggle and a **Daily Reading Reminder** using local notifications and exact alarm permissions.
-
-## Technology Stack
-
-The project leverages the power of Flutter with a robust cloud backend and modern state management.
-
-| Category | Technology | Key Libraries |
-| :--- | :--- | :--- |
-| **Frontend Platform** | **Flutter** | `flutter_animate`, `cached_network_image`, `shimmer` |
-| **Backend / DB** | **Supabase** (BaaS) | `supabase_flutter`, utilizing Auth, Database, Storage & Realtime features |
-| **State Management** | **Flutter Riverpod** | `flutter_riverpod` (AsyncValue, AsyncNotifierProvider) |
-| **Navigation** | **GoRouter** | `go_router` (StatefulShellRoute, Custom Transitions) |
-| **UI/UX** | **Glassmorphism** (Custom) | `dart:ui`'s `BackdropFilter` implementation |
-
-## Demo & Links
-
-| Asset | Link | Source |
-| :--- | :--- | :--- |
-| **GitHub Repository** | `https://github.com/25-26Sem1-Courses/ct312hm01-project-Giang0402.git` | |
-| **Video Demonstration** | `https://youtu.be/VMs2ck3VO_s?si=gUpXZYO9iv6fliWb` | |
-
-## Screenshots
-
-*(Place high-quality screenshots of the app below, organized by feature)*
+**ComicsVerse** is a premium, cross-platform mobile application engineered with **Flutter** to deliver an immersive comics and manga reading experience. Built on a robust **Supabase** backend, it seamlessly integrates real-time community interaction, sophisticated content discovery, and a highly customizable reading engine.
 
 ---
-*(End of README)*
+
+## 🌟 Key Features
+
+### 📖 Immersive Reading Engine
+*   **Dual Reading Modes**: Switch seamlessly between **Vertical Scroll** (Webtoon style) and **Horizontal Page Flip** (Manga style).
+*   **Glassmorphism Controls**: An elegant floating control panel offering instant access to settings.
+*   **Gesture Controls**: Advanced pinch-to-zoom (`InteractiveViewer`) and intuitive navigation gestures.
+*   **Brightness Control**: Integrated in-app brightness adjustment via `screen_brightness` for comfortable night reading.
+
+### 🔍 Discovery & Search
+*   **Smart Home Feed**: Curated **"For You"** grids and dynamic **Weekly Rankings** carousels.
+*   **Advanced Filtering**: Powerful search capability with genre-based filtering.
+*   **Optimized Performance**: Implements **500ms debounce** logic to minimize API overhead during real-time typing.
+
+### 💬 Real-Time Community
+*   **Live Discussions**: Engage with the community through a responsive comment sheet.
+*   **Nested Replies**: Structured conversation threads.
+*   **Instant Updates**: Powered by **Supabase Realtime**, comments and reactions appear instantly across devices.
+
+### 👤 Personalization & Integration
+*   **Secure Authentication**: Flexible sign-in via Email/Password or **Google OAuth**, managed by **Supabase Auth**.
+*   **Cloud Library**: Synchronized bookmarks/library with pull-to-refresh updates.
+*   **User Profile**: Avatar management (Supabase Storage), display name editing, and preference settings.
+*   **Daily Reminders**: Built-in **Local Notifications** to schedule daily reading sessions.
+*   **Dark Mode**: Native support for light and dark themes.
+
+---
+
+## 🛠️ Technology Stack
+
+ComicsVerse leverages a modern, scalable architecture to ensure performance and maintainability.
+
+| Domain | Technology | Key Libraries/Packages |
+| :--- | :--- | :--- |
+| **Framework** | **Flutter** | `flutter`, `dart` |
+| **Backend & Auth** | **Supabase** | `supabase_flutter` (Auth, DB, Storage, Realtime) |
+| **State Management** | **Riverpod** | `flutter_riverpod` (AsyncValue, Notifiers) |
+| **Navigation** | **GoRouter** | `go_router` (Deep linking, Shell routes) |
+| **UI Aesthetics** | **Glassmorphism** | `flutter_animate`, `shimmer`, `cached_network_image`, `google_fonts` |
+| **Local Services** | **Device Integration** | `flutter_local_notifications`, `image_picker`, `shared_preferences`, `screen_brightness` |
+
+---
+
+## 📂 Architecture
+
+The project follows a scalable **Feature-First** directory structure, ensuring separation of concerns and ease of testing:
+
+```
+lib/
+├── core/           # Global configurations, reusable widgets, and utilities
+├── features/       # Feature-specific modules
+│   ├── auth/       # Authentication logic & UI
+│   ├── home/       # Discovery & Ranking feeds
+│   ├── reader/     # The core reading engine
+│   ├── search/     # Search & Filter logic
+│   ├── library/    # User bookmarks/favorites
+│   ├── comment/    # Real-time discussion system
+│   └── profile/    # User settings
+└── main.dart       # Application entry point
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+*   Flutter SDK (3.9.2 or higher)
+*   Dart SDK
+
+### Installation
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/25-26Sem1-Courses/ct312hm01-project-Giang0402.git
+    cd mycomicsapp
+    ```
+
+2.  **Install Dependencies**
+    ```bash
+    flutter pub get
+    ```
+
+3.  **Environment Setup**
+    Create a `.env` file in the root directory and add your Supabase credentials:
+    ```env
+    SUPABASE_URL=your_supabase_url
+    SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+4.  **Run the App**
+    ```bash
+    flutter run
+    ```
+
+---
+
+## 📸 Screenshots
+
+*(Add high-fidelity screenshots here to showcase the UI/UX)*
+
+---
+
+This project was developed as part of a university coursework requirement.
+**Video Demo:** [Watch on YouTube](https://youtu.be/VMs2ck3VO_s?si=gUpXZYO9iv6fliWb)
